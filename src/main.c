@@ -2,8 +2,6 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#define WINDOW_SIZE 600
-
 #define GLSL_VERSION 330
 
 #define RLIGHTS_IMPLEMENTATION
@@ -34,10 +32,10 @@ void Init()
     int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, (float[4]){ 0.2f, 0.2f, 0.2f, 1.0f }, SHADER_UNIFORM_VEC4);
 
-    light = CreateLight(LIGHT_POINT, (Vector3){ 0, 7.5f, 0 }, Vector3Zero(), WHITE, shader);
-    UpdateShaderLightValues(shader, light);
+    light.position = (Vector3){ 0, 7.5f, 0 };
+    light.target = Vector3Zero();
 
-    DisableCursor();
+    light = CreateLight(LIGHT_POINT, light.position, light.target, WHITE, shader);
 
     camera.fovy = 45;
     camera.target = (Vector3){0, 0, 0};
@@ -50,12 +48,15 @@ void Init()
 
     lightCamera.target = (Vector3){ 0, 0, 0 };
 
-    column = LoadModelFromMesh(GenMeshCylinder(0.3f, 7, 10));
-    shaderDefault = column.materials[0].shader;
-    Mesh plane_mesh = GenMeshCube(10, 0.1f, 10);
-    plane = LoadModelFromMesh(plane_mesh);
-    renderTexture = LoadRenderTexture(160, 100);
+    Mesh meshPlane = GenMeshCube(10, 0.1f, 10);
+    Mesh meshCylinder = GenMeshCylinder(0.3f, 7, 10);
 
+    plane = LoadModelFromMesh(meshPlane);
+    column = LoadModelFromMesh(meshCylinder);
+
+    shaderDefault = column.materials[0].shader;
+
+    renderTexture = LoadRenderTexture(160, 100);
     plane.materials[0].maps[MATERIAL_MAP_ALBEDO].texture = renderTexture.texture;
 }
 
@@ -101,10 +102,13 @@ void Render()
     EndDrawing();
 }
 
-int main(void)
+int main()
 {
-    InitWindow(WINDOW_SIZE, WINDOW_SIZE, "Dynamic shadow test");
+    int windowSize = 600;
+
+    InitWindow(windowSize, windowSize, "Dynamic shadow test");
     SetTargetFPS(60);
+    DisableCursor();
 
     Init();
 

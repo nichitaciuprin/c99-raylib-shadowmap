@@ -85,7 +85,7 @@ Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shade
 {
     Light light = { 0 };
 
-    if (lightsCount >= MAX_LIGHTS) return light;
+    if (lightsCount == MAX_LIGHTS) return light;
 
     light.enabled = true;
     light.type = type;
@@ -107,10 +107,10 @@ Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shade
     colorName[7]   = '0' + lightsCount;
 
     light.enabledLoc = GetShaderLocation(shader, enabledName);
-    light.typeLoc = GetShaderLocation(shader, typeName);
-    light.posLoc = GetShaderLocation(shader, posName);
-    light.targetLoc = GetShaderLocation(shader, targetName);
-    light.colorLoc = GetShaderLocation(shader, colorName);
+    light.typeLoc    = GetShaderLocation(shader, typeName);
+    light.posLoc     = GetShaderLocation(shader, posName);
+    light.targetLoc  = GetShaderLocation(shader, targetName);
+    light.colorLoc   = GetShaderLocation(shader, colorName);
 
     UpdateShaderLightValues(shader, light);
 
