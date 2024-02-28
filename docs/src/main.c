@@ -19,15 +19,15 @@
 #include "rlights.h"
 
 Camera3D camera = {0};
-Camera3D camera_shadow_map = {0};
+Camera3D lightCamera = {0};
 Vector3 cube_position = {0.0f, 1.0f, 0.0f};
 Model quad = {0};
 Model torus = {0};
 Model column = {0};
-RenderTexture2D render_texture = {0};
+RenderTexture2D renderTexture = {0};
 Vector3 phase = {0};
 Shader shader = {0};
-Shader shader_default = {0};
+Shader shaderDefault = {0};
 Light light = {0};
 
 void InitShader(){
@@ -40,7 +40,7 @@ void InitShader(){
     SetShaderValue(shader, ambientLoc, (float[4]){ 0.2f, 0.2f, 0.2f, 1.0f }, UNIFORM_VEC4);
 
     light = CreateLight(LIGHT_POINT, (Vector3){ 0, 15.f, 0}, Vector3Zero(), PURPLE, shader);
-    UpdateLightValues(shader, light);
+    UpdateShaderLightValues(shader, light);
 
 }
 
@@ -61,29 +61,29 @@ void DrawColumnsShadow(void)
     DrawColoredColumns(DARKGRAY);
 }
 
-float phaseLight = .0f;
+float lightPhase = .0f;
 
 void update_frame()
 {
-    phaseLight += 0.05f;
-    camera_shadow_map.position.x = light.position.x = sinf(phaseLight) * 4.0f;
-    UpdateLightValues(shader, light);
+    lightPhase += 0.05f;
+    lightCamera.position.x = light.position.x = sinf(lightPhase) * 4.0f;
+    UpdateShaderLightValues(shader, light);
 
     phase = Vector3Add(phase, (Vector3){0.01f, 0.02f, 0.03f});
     torus.transform = MatrixRotateXYZ(phase);
     UpdateCamera(&camera);
 
-    torus.materials[0].shader = shader_default;
-    column.materials[0].shader = shader_default;
+    torus.materials[0].shader = shaderDefault;
+    column.materials[0].shader = shaderDefault;
 
-    camera_shadow_map.fovy += IsKeyDown(KEY_KP_ADD) * 0.1f;
-    camera_shadow_map.fovy -= IsKeyDown(KEY_KP_SUBTRACT) * 0.1f;
+    lightCamera.fovy += IsKeyDown(KEY_KP_ADD) * 0.1f;
+    lightCamera.fovy -= IsKeyDown(KEY_KP_SUBTRACT) * 0.1f;
 
 
 
-    BeginTextureMode(render_texture);{
+    BeginTextureMode(renderTexture);{
         ClearBackground(GRAY);
-        BeginMode3D(camera_shadow_map);
+        BeginMode3D(lightCamera);
         {
             DrawColumnsShadow();
             DrawModel(torus, cube_position, 1.f, DARKGRAY);
@@ -144,21 +144,21 @@ int main(void)
     camera.type = CAMERA_PERSPECTIVE;
     SetCameraMode(camera, CAMERA_ORBITAL);
 
-    camera_shadow_map.fovy = 20.0f;
-    camera_shadow_map.target = (Vector3){.0f, .0f, .0f};
-    camera_shadow_map.position = (Vector3){0.0f, 10.0f, 0.0f};
-    camera_shadow_map.up = (Vector3){0.0f, 0.0f,-1.0f};
-    camera_shadow_map.type = CAMERA_PERSPECTIVE;
+    lightCamera.fovy = 20.0f;
+    lightCamera.target = (Vector3){.0f, .0f, .0f};
+    lightCamera.position = (Vector3){0.0f, 10.0f, 0.0f};
+    lightCamera.up = (Vector3){0.0f, 0.0f,-1.0f};
+    lightCamera.type = CAMERA_PERSPECTIVE;
 
 
     torus = LoadModelFromMesh(GenMeshTorus(.3f, 2.f, 20, 20));
     column = LoadModelFromMesh(GenMeshCylinder(0.3f, 7.f, 10));
-    shader_default = torus.materials[0].shader;
+    shaderDefault = torus.materials[0].shader;
     Mesh plane_mesh = GenMeshCube(10.f, .1f, 10.f);
     quad = LoadModelFromMesh(plane_mesh);
-    render_texture = LoadRenderTexture(160, 100);
+    renderTexture = LoadRenderTexture(160, 100);
 
-    quad.materials[0].maps[MAP_DIFFUSE].texture = render_texture.texture;
+    quad.materials[0].maps[MAP_DIFFUSE].texture = renderTexture.texture;
 
 #ifdef OS_WEB
     emscripten_set_main_loop(update_frame, 0, 1);
