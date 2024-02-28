@@ -2,7 +2,7 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#define WIDTH 800
+#define WIDTH 600
 #define HEIGHT 600
 
 #define GLSL_VERSION 330
@@ -20,9 +20,10 @@ RenderTexture2D render_texture = {0};
 Vector3 phase = {0};
 Shader shader = {0};
 Shader shader_default = {0};
-Light light_1 = {0};
+Light light = {0};
+float ligthHeight = 7.5f;
 
-float phaseLight = .0f;
+float phaseLight = 0;
 
 void InitShader()
 {
@@ -35,29 +36,29 @@ void InitShader()
     int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, (float[4]){ 0.2f, 0.2f, 0.2f, 1.0f }, SHADER_UNIFORM_VEC4);
 
-    light_1 = CreateLight(LIGHT_POINT, (Vector3){ 0, 3, 0 }, Vector3Zero(), PURPLE, shader);
-    UpdateLightValues(shader, light_1);
+    light = CreateLight(LIGHT_POINT, (Vector3){ 0, ligthHeight, 0 }, Vector3Zero(), PURPLE, shader);
+    UpdateLightValues(shader, light);
 }
 
 void DrawColoredColumns(Color color)
 {
-    DrawModel(column, (Vector3){ 1.5f, -1.0f, -1.5f}, 1.0f, color);
-    DrawModel(column, (Vector3){-1.5f, -1.0f,  1.5f}, 1.0f, color);
-    DrawModel(column, (Vector3){ 1.5f, -1.0f,  1.5f}, 1.0f, color);
-    DrawModel(column, (Vector3){-1.5f, -1.0f, -1.5f}, 1.0f, color);
+    DrawModel(column, (Vector3){ 0, 0, 0 }, 1.0f, color);
 }
 
 void Init()
 {
+    DisableCursor();
+
     camera.fovy = 45;
     camera.target = (Vector3){0, 0, 0};
     camera.position = (Vector3){0, 10, 10};
     camera.up = (Vector3){0, 1, 0};
 
-    camera_shadow_map.fovy = 20.0f;
-    camera_shadow_map.target = (Vector3){0, 0, 0};
-    camera_shadow_map.position = (Vector3){0, 10, 0};
+    camera_shadow_map.fovy = 45.0f;
+    camera_shadow_map.position = (Vector3){0, ligthHeight, 0};
     camera_shadow_map.up = (Vector3){0, 0, -1};
+
+    camera_shadow_map.target = (Vector3){ 0, 0, 0 };
 
     torus = LoadModelFromMesh(GenMeshTorus(0.3f, 2, 20, 20));
     column = LoadModelFromMesh(GenMeshCylinder(0.3f, 7, 10));
@@ -71,9 +72,10 @@ void Init()
 
 void Update()
 {
-    phaseLight += 0.05f;
-    camera_shadow_map.position.x = light_1.position.x = sinf(phaseLight) * 4;
-    UpdateLightValues(shader, light_1);
+    phaseLight += 0.01f;
+    camera_shadow_map.position.x = light.position.x = sinf(phaseLight) * 2;
+    camera_shadow_map.position.z = light.position.z = cosf(phaseLight) * 2;
+    UpdateLightValues(shader, light);
 
     phase = Vector3Add(phase, (Vector3){0.01f, 0.02f, 0.03f});
     torus.transform = MatrixRotateXYZ(phase);
@@ -91,9 +93,9 @@ void Update()
 
         BeginMode3D(camera_shadow_map);
         {
-            DrawColoredColumns(DARKGRAY);
-            DrawModel(torus, torusPosition, 1, DARKGRAY);
-            DrawCubeWires((Vector3){2, 2, 1}, 1, 1, 1, DARKGRAY);
+            DrawColoredColumns(BLACK);
+            // DrawModel(torus, torusPosition, 1, DARKGRAY);
+            DrawCubeWires((Vector3){0, 0.5f, 0}, 1, 1, 1, BLACK);
         }
         EndMode3D();
     }
@@ -110,13 +112,13 @@ void Update()
 
         BeginMode3D(camera);
         {
-            DrawSphereEx(light_1.position, 0.2f, 8, 8, light_1.color);
+            DrawSphereEx(light.position, 0.2f, 8, 8, light.color);
 
             DrawColoredColumns(RED);
-            DrawModel(torus, torusPosition, 1.f, RED);
-            DrawCubeWires((Vector3){2.f, 2.f, 1.f}, 1, 1, 1, BLUE);
+            // DrawModel(torus, torusPosition, 1, RED);
+            DrawCubeWires((Vector3){0, 0.5f, 0}, 1, 1, 1, BLUE);
 
-            DrawModel(quad, (Vector3){0, -1, 0}, 1, GREEN);
+            DrawModel(quad, (Vector3){0, 0, 0}, 1, GREEN);
         }
         EndMode3D();
 
@@ -131,6 +133,7 @@ void Update()
 int main(void)
 {
     InitWindow(WIDTH, HEIGHT, "Dynamic shadow test");
+    // SetWindowPosition(700, 100);
     SetTargetFPS(60);
     InitShader();
     Init();

@@ -28,7 +28,7 @@ RenderTexture2D render_texture = {0};
 Vector3 phase = {0};
 Shader shader = {0};
 Shader shader_default = {0};
-Light light_1 = {0};
+Light light = {0};
 
 void InitShader(){
     shader = LoadShader(FormatText("./assets/shaders/glsl%i/base_lighting.vs", GLSL_VERSION),
@@ -39,8 +39,8 @@ void InitShader(){
     int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, (float[4]){ 0.2f, 0.2f, 0.2f, 1.0f }, UNIFORM_VEC4);
 
-    light_1 = CreateLight(LIGHT_POINT, (Vector3){ 0, 15.f, 0}, Vector3Zero(), PURPLE, shader);
-    UpdateLightValues(shader, light_1);
+    light = CreateLight(LIGHT_POINT, (Vector3){ 0, 15.f, 0}, Vector3Zero(), PURPLE, shader);
+    UpdateLightValues(shader, light);
 
 }
 
@@ -66,8 +66,8 @@ float phaseLight = .0f;
 void update_frame()
 {
     phaseLight += 0.05f;
-    camera_shadow_map.position.x = light_1.position.x = sinf(phaseLight) * 4.0f;
-    UpdateLightValues(shader, light_1);
+    camera_shadow_map.position.x = light.position.x = sinf(phaseLight) * 4.0f;
+    UpdateLightValues(shader, light);
 
     phase = Vector3Add(phase, (Vector3){0.01f, 0.02f, 0.03f});
     torus.transform = MatrixRotateXYZ(phase);
