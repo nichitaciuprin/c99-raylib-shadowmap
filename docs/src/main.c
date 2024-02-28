@@ -30,7 +30,7 @@ Shader shader = {0};
 Shader shader_default = {0};
 Light light_1 = {0};
 
-void shader_init(){
+void InitShader(){
     shader = LoadShader(FormatText("./assets/shaders/glsl%i/base_lighting.vs", GLSL_VERSION),
                             FormatText("./assets/shaders/glsl%i/lighting.fs", GLSL_VERSION));
     shader.locs[LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
@@ -44,21 +44,21 @@ void shader_init(){
 
 }
 
-void draw_colored_columns(Color color){
+void DrawColoredColumns(Color color){
     DrawModel(column, (Vector3){1.5f, -1.f, -1.5f}, 1.f, color);
     DrawModel(column, (Vector3){-1.5f, -1.f, 1.5f}, 1.f, color);
     DrawModel(column, (Vector3){1.5f, -1.f, 1.5f}, 1.f, color);
     DrawModel(column, (Vector3){-1.5f, -1.f, -1.5f}, 1.f, color);
 }
 
-void draw_columns(void)
+void DrawColumns(void)
 {
-    draw_colored_columns(RED);
+    DrawColoredColumns(RED);
 }
 
-void draw_columns_sadow(void)
+void DrawColumnsShadow(void)
 {
-    draw_colored_columns(DARKGRAY);
+    DrawColoredColumns(DARKGRAY);
 }
 
 float phaseLight = .0f;
@@ -85,7 +85,7 @@ void update_frame()
         ClearBackground(GRAY);
         BeginMode3D(camera_shadow_map);
         {
-            draw_columns_sadow();
+            DrawColumnsShadow();
             DrawModel(torus, cube_position, 1.f, DARKGRAY);
             DrawCubeWires((Vector3){2.f, 2.f, 1.f}, 1, 1, 1, DARKGRAY);
         }
@@ -103,7 +103,7 @@ void update_frame()
 
         BeginMode3D(camera);
         {
-            draw_columns();
+            DrawColumns();
             DrawModel(torus, cube_position, 1.f, RED);
             DrawCubeWires((Vector3){2.f, 2.f, 1.f}, 1, 1, 1, BLUE);
             DrawModel(quad, (Vector3){0, -1.f, 0}, 1.f, GREEN);
@@ -135,7 +135,7 @@ int main(void)
     InitWindow(WIDTH, HEIGHT, "This is a dynamic shadow test");
     SetTargetFPS(60);
 
-    shader_init();
+    InitShader();
 
     camera.fovy = 45.0f;
     camera.target = (Vector3){.0f, .0f, .0f};
