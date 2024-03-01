@@ -11,8 +11,8 @@
 Camera3D camera = {0};
 Light light = {0};
 float lightPhase = 0;
-Vector3 columnPosition = { 0, 0, 0 };
-Vector3 cubePosition = { 0, 0.50f + 0.05f, 0 }; /* + 0.05f to see bottom part */
+Vector3 columnPosition = {0, 0, 0};
+Vector3 cubePosition = {0, 0.50f + 4, 0};
 
 RenderTexture2D renderTexture = {0};
 Shader shader = {0};
@@ -30,9 +30,9 @@ void Init()
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
     int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, (float[4]){ 0.2f, 0.2f, 0.2f, 1.0f }, SHADER_UNIFORM_VEC4);
+    SetShaderValue(shader, ambientLoc, (float[4]){0.2f, 0.2f, 0.2f, 1.0f}, SHADER_UNIFORM_VEC4);
 
-    light.position = (Vector3){ 0, 7.5f, 0 };
+    light.position = (Vector3){0, 7.5f, 0};
     light.target = Vector3Zero();
 
     light = CreateLight(LIGHT_POINT, light.position, light.target, WHITE, shader);
@@ -46,7 +46,7 @@ void Init()
     lightCamera.position = light.position;
     lightCamera.up = (Vector3){0, 0, -1};
 
-    lightCamera.target = (Vector3){ 0, 0, 0 };
+    lightCamera.target = (Vector3){0, 0, 0};
 
     Mesh meshPlane = GenMeshCube(10, 0.1f, 10);
     Mesh meshCylinder = GenMeshCylinder(0.3f, 7, 10);
@@ -92,7 +92,7 @@ void Render()
             DrawModel(plane, (Vector3){0, 0, 0}, 1, GREEN);
 
             DrawSphereEx(light.position, 0.2f, 8, 8, light.color);
-            DrawModel(column, (Vector3){ 0, 0, 0 }, 1, RED);
+            DrawModel(column, (Vector3){0, 0, 0}, 1, RED);
             DrawCubeWires(cubePosition, 1, 1, 1, BLUE);
         }
         EndMode3D();
