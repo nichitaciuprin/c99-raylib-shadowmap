@@ -2,8 +2,6 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#define GLSL_VERSION 330
-
 #define RLIGHTS_IMPLEMENTATION
 #include "rlights.h"
 
@@ -23,8 +21,10 @@ Camera3D lightCamera = {0};
 
 void Init()
 {
-    shader = LoadShader(TextFormat("../assets/shaders/glsl%i/base_lighting.vs", GLSL_VERSION),
-                        TextFormat("../assets/shaders/glsl%i/lighting.fs", GLSL_VERSION));
+    int glslVersion = 330;
+
+    shader = LoadShader(TextFormat("../assets/shaders/glsl%i/base_lighting.vs", glslVersion),
+                        TextFormat("../assets/shaders/glsl%i/lighting.fs", glslVersion));
 
     shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
