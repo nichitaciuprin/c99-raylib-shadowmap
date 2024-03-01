@@ -9,6 +9,7 @@
 Camera3D camera = {0};
 Light light = {0};
 float lightPhase = 0;
+Vector3 planePosition = {0, 0, 0};
 Vector3 columnPosition = {0, 0, 0};
 Vector3 cubePosition = {0, 0.50f + 4, 0};
 
@@ -90,10 +91,10 @@ void Render()
 
         BeginMode3D(camera);
         {
-            DrawModel(plane, (Vector3){0, 0, 0}, 1, GREEN);
+            DrawModel(plane, planePosition, 1, GREEN);
             DrawSphereEx(light.position, 0.2f, 8, 8, light.color);
 
-            DrawModel(column, (Vector3){0, 0, 0}, 1, RED);
+            DrawModel(column, columnPosition, 1, RED);
             DrawCubeWires(cubePosition, 1, 1, 1, BLUE);
         }
         EndMode3D();
