@@ -11,7 +11,7 @@ Light light = {0};
 float lightPhase = 0;
 Vector3 planePosition = {0, 0, 0};
 Vector3 columnPosition = {0, 0, 0};
-Vector3 cubePosition = {0, 0.50f + 4, 0};
+Vector3 cubePosition = {0, 0.5f + 4, 0};
 
 RenderTexture2D renderTexture = {0};
 Shader shader = {0};
@@ -31,7 +31,9 @@ void Init()
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
     int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, (float[4]){0.2f, 0.2f, 0.2f, 1.0f}, SHADER_UNIFORM_VEC4);
+    float strength = 0.2f;
+    float ambientValue[4] = {strength, strength, strength, 1};
+    SetShaderValue(shader, ambientLoc, ambientValue, SHADER_UNIFORM_VEC4);
 
     light.position = (Vector3){0, 10, 0};
     light.target = Vector3Zero();
@@ -76,7 +78,7 @@ void Render()
 
         BeginMode3D(lightCamera);
         {
-            DrawModel(column, columnPosition, 1.0f, BLACK);
+            DrawModel(column, columnPosition, 1, BLACK);
             DrawCubeWires(cubePosition, 1, 1, 1, BLACK);
         }
         EndMode3D();
