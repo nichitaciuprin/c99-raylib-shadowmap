@@ -90,8 +90,8 @@ void Render()
         BeginMode3D(camera);
         {
             DrawModel(plane, (Vector3){0, 0, 0}, 1, GREEN);
-
             DrawSphereEx(light.position, 0.2f, 8, 8, light.color);
+
             DrawModel(column, (Vector3){0, 0, 0}, 1, RED);
             DrawCubeWires(cubePosition, 1, 1, 1, BLUE);
         }
