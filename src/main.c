@@ -32,7 +32,7 @@ void Init()
     int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, (float[4]){0.2f, 0.2f, 0.2f, 1.0f}, SHADER_UNIFORM_VEC4);
 
-    light.position = (Vector3){0, 7.5f, 0};
+    light.position = (Vector3){0, 10, 0};
     light.target = Vector3Zero();
 
     light = CreateLight(LIGHT_POINT, light.position, light.target, WHITE, shader);
@@ -56,7 +56,8 @@ void Init()
 
     shaderDefault = column.materials[0].shader;
 
-    renderTexture = LoadRenderTexture(160, 100);
+    int textureSize = 100;
+    renderTexture = LoadRenderTexture(textureSize, textureSize);
     plane.materials[0].maps[MATERIAL_MAP_ALBEDO].texture = renderTexture.texture;
 }
 
